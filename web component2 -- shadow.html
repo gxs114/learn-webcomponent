@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+    t-button, s-button, d-button {
+      margin: 1rem;
+      padding: 4px;
+      border: 1px solid red;
+    }
+    t-button span, s-button span, d-button span {
+      border: 1px solid slateblue;
+    }
+  </style>
+  <t-button>
+    <span>click me</span>
+  </t-button>
+  <s-button>能出来吗？</s-button>
+  <d-button>能出来吗？</d-button>
+
+
+  <script>
+    class TButton extends HTMLElement {
+      constructor() {
+        super();
+        console.log( this )
+      }
+    }
+    customElements.define('t-button', TButton);
+
+    class SButton extends HTMLElement {
+      constructor() {
+        super();
+        const shadow = this.attachShadow({ mode: 'open' });
+        shadow.innerHTML = "<span>click me</span>";
+        this.shadow = shadow
+      }
+    }
+    customElements.define('s-button', SButton);
+    console.log( document.querySelector("s-button").shadowRoot )
+
+    class DButton extends HTMLElement {
+      constructor() {
+        super();
+        const shadow = this.attachShadow({ mode: 'closed' });
+        shadow.innerHTML = "<span>click me</span>";
+        this.shadow = shadow
+      }
+    }
+    customElements.define('d-button', DButton);
+    console.log( document.querySelector("d-button").shadowRoot )
+  </script>
+</body>
+</html>

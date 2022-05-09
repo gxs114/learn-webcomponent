@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <bfs-parent path="123">
+      <bfs-children></bfs-children>
+    </bfs-parent>
+
+    <iframe src="./page2.html" frameborder="0"></iframe>
+
+    <script>
+      /* 
+        生命周期 -- 挂载
+
+        1. constructor 初始化 
+        2. attributeChangedCallback  如果监听的属性一开始就存在的话，就会触发一次 
+        3. connectedCallback  当元素插入到 DOM 中时触发
+        4. 如果存在子元素，就把上边 3 步再走一次
+        5. disconnectedCallback  当元素从 DOM 中移除时触发
+
+        attributeChangedCallback 每次监听的属性发生变化时都会触发
+      */
+
+      /* 
+        生命周期 -- 移动
+
+        1. disconnectedCallback  当元素从 DOM 中移除时触发
+        2. adoptedCallback  当元素被移动到"新的文档"时触发, document是文档，新文档就是类似iframe，一般的移动节点到另个div是不会触发的
+        3. connectedCallback  当元素插入到 DOM 中时触发
+        4. 如果存在子节点就把上边流程在跑一次
+
+
+      */
+    </script>
+    <script>
+      class Parent extends HTMLElement {
+        // 设置监听的值 返回需要监听的属性名称字符串数组
+        static get observedAttributes() {
+          return ["path"]
+        }
+
+        // 初始化
+        constructor(props) {
+          super()
+          console.log("----------------parent.constructor,props=", props)
+        }
+
+        // 挂载到dom后
+        connectedCallback() {
+          console.log(" Parent.connectedCallback")
+        }
+
+        // 卸载后
+        disconnectedCallback() {
+          console.log("Parent.disconnectedCallback")
+        }
+
+        // 设置的监听的值发生改变时
+        attributeChangedCallback(prop, oldValue, newValue) {
+          console.log(
+            "Parent 属性发生了变化",
+            " prop=",
+            prop,
+            " oldValue=",
+            oldValue,
+            " newValue=",
+            newValue
+          )
+        }
+
+        // 节点发生了移动
+        adoptedCallback() {
+          console.log("Parent 发生了移动")
+        }
+      }
+
+      class Children extends HTMLElement {
+        static get observedAttributes() {
+          return ["path"]
+        }
+        constructor(props) {
+          super(props)
+          console.log("----------------children.constructor")
+        }
+
+        connectedCallback() {
+          console.log(" Children.connectedCallback")
+        }
+
+        disconnectedCallback() {
+          console.log("Children.disconnectedCallback")
+        }
+
+        adoptedCallback() {
+          console.log("Children 发生了移动")
+        }
+
+        attributeChangedCallback(prop, oldValue, newValue) {
+          console.log(
+            "Children 属性发生了变化",
+            " prop=",
+            prop,
+            " oldValue=",
+            oldValue,
+            " newValue=",
+            newValue
+          )
+        }
+      }
+
+      customElements.define("bfs-parent", Parent)
+      customElements.define("bfs-children", Children)
+    </script>
+
+    <script>
+      const _bfsParent = document.querySelector("bfs-parent")
+      const _bfsChildren = document.querySelector("bfs-children")
+
+      setTimeout(() => {
+        console.log("----------------")
+        console.log("设置属性")
+        _bfsParent.setAttribute("path", "old-path")
+        _bfsChildren.setAttribute("path", "children-old-path")
+        setTimeout(() => {
+          _bfsParent.setAttribute("path", "new-path")
+        }, 10)
+      }, 500)
+
+      setTimeout(() => {
+        console.log("----------------------------")
+        console.log("开始移动操作")
+        const _container = document
+          .querySelector("iframe")
+          .contentDocument.querySelector("body")
+        // 移动节点的本质就是
+        // 先从文档树中删除节点，但是不销毁
+        // 然后再插入到文档树中
+        // 只要没有销毁 重新调用 constructor 就是移动
+        _container.append(_bfsParent)
+      }, 1000)
+    </script>
+  </body>
+</html>

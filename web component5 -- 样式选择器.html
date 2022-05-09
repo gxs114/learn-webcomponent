@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      /* 外部不起作用的 */
+      t-button button {
+        color: slateblue;
+      }
+    </style>
+
+    <button>click me</button>
+
+    <div class="container" style="margin: 1rem 0">
+      <t-button>click me 1</t-button>
+    </div>
+
+    <t-button class="two">click me 2</t-button>
+
+    <script>
+      class TButton extends HTMLElement {
+        constructor() {
+          super()
+          const shadow = this.attachShadow({ mode: "open" })
+          shadow.innerHTML = `
+            <style>
+              /* host相当于自身 */
+              :host {
+                border: 1px solid red;
+                padding: 4px;
+              }
+              /* 选择后代 */
+              :host button {
+                color: slateblue;
+              }
+              /* 选择自身身上有 two 类的元素 */
+              :host(.two) button {
+                color: red;
+              }
+              /* 选中自己所有父元素中存在 container 类下的自己 */
+              :host-context(.container) {
+                border: 1px solid green;
+              }
+            </style>
+
+            <button><slot/></button>
+          `
+          this.shadow = shadow
+        }
+      }
+      customElements.define("t-button", TButton)
+    </script>
+  </body>
+</html>

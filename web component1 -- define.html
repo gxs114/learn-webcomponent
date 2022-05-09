@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <t-button>click me</t-button>
+  <button is="t-button">click me origin button</button>
+
+  <script>
+    class TButton extends HTMLButtonElement {
+      constructor() {
+        super();
+        console.log( this )
+        this.setAttribute("a", 123)
+      }
+    }
+
+    customElements.define('t-button', TButton, { extends: "button" });
+  </script>
+</body>
+</html>
